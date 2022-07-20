@@ -2,7 +2,8 @@ module.exports = {
   'env': {
     'node': true,
     'commonjs': true,
-    'es2021': true
+    'es2021': true,
+    'jest': true,
   },
   'extends': 'eslint:recommended',
   'parserOptions': {
@@ -34,5 +35,9 @@ module.exports = {
       'error', { 'before': true, 'after': true }
     ],
     'no-console': 0,
+    'eol-last': [
+      'error', 'always'
+    ],
+    'no-unused-vars': 'warn'
   }
 }
