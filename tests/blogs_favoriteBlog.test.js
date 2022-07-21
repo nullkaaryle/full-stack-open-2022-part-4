@@ -1,32 +1,17 @@
 const listHelper = require('../utils/list_helper')
 const testMaterials = require('./test_materials')
 
-describe('TOTAL LIKES:', () => {
 
-  test('of empty list is zero', () => {
-    const result = listHelper.totalLikes(testMaterials.listWithoutBlogs)
-    expect(result).toBe(0)
-  })
+describe('THE FAVORITE BLOG WITH MOST LIKES:', () => {
 
-  test('when list has only one blog equals the likes of that', () => {
-    const result = listHelper.totalLikes(testMaterials.listWithOneBlog)
-    expect(result).toBe(5)
-  })
-
-  test('of a bigger list is calculated right', () => {
-    const result = listHelper.totalLikes(testMaterials.listWithManyBlogs)
-    expect(result).toBe(36)
-  })
-
-})
-
-describe('FAVORITES:', () => {
-
+  // If there are no blogs, then there is no favorite blog
   test('favorite blog of empty blog list', () => {
     const result = listHelper.favoriteBlog(testMaterials.listWithoutBlogs)
     expect(result).toEqual('no blogs')
   })
 
+  // If there is only one blog, then the favorite blog is that one
+  // even if the blog has no likes.
   test('favorite blog when list has only one blog', () => {
     const result = listHelper.favoriteBlog(testMaterials.listWithOneBlog)
     expect(result).toEqual({
@@ -38,7 +23,7 @@ describe('FAVORITES:', () => {
 
   // if there are many favorite blogs,
   // the favoriteBlog function returns the favorite blog
-  // which was the first in the order original list
+  // which was the first in the order of the original list
   test('favorite blog when list has many blogs', () => {
     const result = listHelper.favoriteBlog(testMaterials.listWithManyBlogs)
     expect(result).toEqual((
