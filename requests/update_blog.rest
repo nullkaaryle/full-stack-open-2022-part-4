@@ -1,0 +1,14 @@
+// These .rest files are for the REST client plugin.
+// After clicking the "Send request",
+// the REST client will execute the HTTP request and 
+// response from the server is opened in the editor.
+
+PUT http://localhost:3001/api/blogs/62db1758d93dea74ebe7ed1f
+content-type: application/json
+
+{
+  "title": "Canonical string reduction",
+  "author": "Edsger W. Dijkstra",
+  "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+  "likes": 15
+}

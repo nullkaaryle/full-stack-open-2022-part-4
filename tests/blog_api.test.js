@@ -75,12 +75,30 @@ describe('VIEWING BLOGS:', () => {
     expect(resultBlog.body).toEqual(processedBlogToView)
   })
 
+
+  test('viewing a blog fails with statuscode 400 if id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445rairai'
+
+    await api
+      .get(`/api/blogs/${invalidId}`)
+      .expect(400)
+  })
+
+
+  test('viewing blog fails with statuscode 404 if blog does not exist', async () => {
+    const validNonexistingId = await testHelper.nonExistingId()
+
+    await api
+      .get(`/api/blogs/${validNonexistingId}`)
+      .expect(404)
+  })
+
 })
 
 
 describe('ADDING BLOGS:', () => {
 
-  test.only('a valid blog is added ', async () => {
+  test('a valid blog is added ', async () => {
     const newBlog = {
       title: 'Type wars',
       author: 'Robert C. Martin',
@@ -101,7 +119,7 @@ describe('ADDING BLOGS:', () => {
     expect(titles).toContain('Type wars')
   })
 
-  test.only('a valid blog without likes is added and has zero likes as default', async () => {
+  test('a valid blog without likes is added and has zero likes as default', async () => {
     const newBlog = {
       title: 'First class tests',
       author: 'Robert C. Martin',
@@ -115,7 +133,7 @@ describe('ADDING BLOGS:', () => {
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await testHelper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length +1)
+    expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length + 1)
 
     const likes = blogsAtEnd.map(r => r.likes)
     expect(likes).toContain(0)
@@ -171,6 +189,34 @@ describe('ADDING BLOGS:', () => {
 
 })
 
+
+describe('UPDATING BLOGS:', () => {
+
+  test('a blog can be updated', async () => {
+    const blogsAtStart = await testHelper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const updatedBlog = {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 666
+    }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(200)
+
+    const blogsAtEnd = await testHelper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length)
+
+    const likes = blogsAtEnd.map(r => r.likes)
+    expect(likes).not.toContain(blogToUpdate.likes)
+    expect(likes).toContain(666)
+  })
+
+})
 
 describe('DELETING BLOGS:', () => {
 
