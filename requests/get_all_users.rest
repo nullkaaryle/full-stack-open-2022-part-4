@@ -1,0 +1,6 @@
+// These .rest files are for the REST client plugin.
+// After clicking the "Send request",
+// the REST client will execute the HTTP request and 
+// response from the server is opened in the editor.
+
+GET http://localhost:3001/api/users

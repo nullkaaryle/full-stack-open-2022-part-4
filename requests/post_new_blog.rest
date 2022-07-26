@@ -6,9 +6,11 @@
 POST http://localhost:3001/api/blogs/
 content-type: application/json
 
-{
-    "title": "Canonical string reduction",
-    "author": "Edsger W. Dijkstra",
-    "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    "likes": 12
-}
+
+  {
+    "title": "First class tests vol11",
+    "author": "Robert C. Martin",
+    "url": "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html",
+    "likes": 22,
+    "user": "62de8df9182763d81e70bd96"
+  }
