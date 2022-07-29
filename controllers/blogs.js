@@ -1,7 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-
-const logger = require('../utils/logger')
 const { userExtractor } = require('../utils/middleware')
 
 
@@ -49,18 +47,26 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 })
 
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const body = request.body
+  const user = await request.user
+  const blog = await Blog.findById(request.params.id)
 
-  const blog = {
+  const dataForBlogUpdate = {
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes
   }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-  response.json(updatedBlog)
+  if (blog.user.toString() === user._id.toString()) {
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, dataForBlogUpdate, { new: true })
+    response.json(updatedBlog)
+  } else {
+    response.status(401).json({
+      error: 'no permission'
+    })
+  }
 })
 
 

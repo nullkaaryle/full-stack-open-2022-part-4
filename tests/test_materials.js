@@ -1,3 +1,27 @@
+
+const initialUsers = [
+  {
+    username: 'timtes',
+    name: 'Timothy Testson',
+    password: 'testpassword123'
+  },
+  {
+    username: 'root',
+    password: 'password'
+  }
+]
+
+const testUserCredentials = [{
+  username: initialUsers[0].username,
+  password: initialUsers[0].password
+},
+{
+  username: initialUsers[1].username,
+  password: initialUsers[1].password
+}
+]
+
+
 const initialBlogs = [
   {
     title: 'TDD harms architecture',
@@ -76,5 +100,7 @@ module.exports = {
   initialBlogs,
   listWithoutBlogs,
   listWithOneBlog,
-  listWithManyBlogs
+  listWithManyBlogs,
+  initialUsers,
+  testUserCredentials,
 }

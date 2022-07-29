@@ -1,20 +1,52 @@
 const supertest = require('supertest')
 const mongoose = require('mongoose')
+
 const testHelper = require('./test_helper')
 const testMaterials = require('./test_materials')
-const app = require('../app')
 
-const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
+const app = require('../app')
+const api = supertest(app)
+
+var testToken = null
+var unvalidTestToken = null
 
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(testMaterials.initialBlogs)
+
+  await User
+    .deleteMany({})
+
+  await api
+    .post('/api/users')
+    .send(testMaterials.initialUsers[0])
+
+  await api
+    .post('/api/login')
+    .send(testMaterials.testUserCredentials[0])
+    .expect(response => { testToken = response.body.token })
+
+  await Blog
+    .deleteMany({})
+
+  await api
+    .post('/api/blogs')
+    .set('Authorization', `bearer ${testToken}`)
+    .send(testMaterials.initialBlogs[0])
+
+  await api
+    .post('/api/blogs')
+    .set('Authorization', `bearer ${testToken}`)
+    .send(testMaterials.initialBlogs[1])
+
 })
 
 
+
 describe('BLOGS ARE RETURNED CORRECTLY:', () => {
+
 
   test('blogs are returned as json', async () => {
     await api
@@ -49,6 +81,7 @@ describe('BLOGS ARE RETURNED CORRECTLY:', () => {
     expect(titles).toContain('Canonical string reduction')
   })
 
+
   test('returned blogs have properties title, author, url and likes', async () => {
     const blogs = await testHelper.blogsInDb()
     const blogKeys = Object.keys(blogs[0])
@@ -58,9 +91,14 @@ describe('BLOGS ARE RETURNED CORRECTLY:', () => {
     expect(blogKeys).toContain('url')
     expect(blogKeys).toContain('likes')
   })
+
+
 })
 
+
+
 describe('VIEWING BLOGS:', () => {
+
 
   test('a specific blog can be viewed', async () => {
     const blogsAtStart = await testHelper.blogsInDb()
@@ -93,12 +131,16 @@ describe('VIEWING BLOGS:', () => {
       .expect(404)
   })
 
+
 })
+
 
 
 describe('ADDING BLOGS:', () => {
 
-  test('a valid blog is added ', async () => {
+
+  test('a valid blog is added', async () => {
+
     const newBlog = {
       title: 'Type wars',
       author: 'Robert C. Martin',
@@ -108,6 +150,7 @@ describe('ADDING BLOGS:', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${testToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -119,6 +162,7 @@ describe('ADDING BLOGS:', () => {
     expect(titles).toContain('Type wars')
   })
 
+
   test('a valid blog without likes is added and has zero likes as default', async () => {
     const newBlog = {
       title: 'First class tests',
@@ -128,6 +172,7 @@ describe('ADDING BLOGS:', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${testToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -139,6 +184,7 @@ describe('ADDING BLOGS:', () => {
     expect(likes).toContain(0)
   })
 
+
   test('blog without title is not added', async () => {
     const newBlog = {
       author: 'Robert C. Martin',
@@ -148,12 +194,14 @@ describe('ADDING BLOGS:', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${testToken}`)
       .send(newBlog)
       .expect(400)
 
     const blogsAtEnd = await testHelper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length)
   })
+
 
   test('blog without author is not added', async () => {
     const newBlog = {
@@ -164,12 +212,14 @@ describe('ADDING BLOGS:', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${testToken}`)
       .send(newBlog)
       .expect(400)
 
     const blogsAtEnd = await testHelper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length)
   })
+
 
   test('blog without url is not added', async () => {
     const newBlog = {
@@ -180,6 +230,7 @@ describe('ADDING BLOGS:', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${testToken}`)
       .send(newBlog)
       .expect(400)
 
@@ -187,24 +238,42 @@ describe('ADDING BLOGS:', () => {
     expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length)
   })
 
+
+  test('blog is not added without authorization token', async () => {
+    const newBlog = {
+      title: 'First class tests',
+      author: 'Robert C. Martin',
+      likes: 10,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+
+    const blogsAtEnd = await testHelper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length)
+  })
+
+
 })
 
 
+
 describe('UPDATING BLOGS:', () => {
+
 
   test('a blog can be updated', async () => {
     const blogsAtStart = await testHelper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
 
     const updatedBlog = {
-      title: 'Canonical string reduction',
-      author: 'Edsger W. Dijkstra',
-      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
-      likes: 666
+      likes: 22
     }
 
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', `bearer ${testToken}`)
       .send(updatedBlog)
       .expect(200)
 
@@ -213,19 +282,58 @@ describe('UPDATING BLOGS:', () => {
 
     const likes = blogsAtEnd.map(r => r.likes)
     expect(likes).not.toContain(blogToUpdate.likes)
-    expect(likes).toContain(666)
+    expect(likes).toContain(22)
   })
+
+
+  test('blog is not updated with unvalid authorization token', async () => {
+
+    await api
+      .post('/api/users')
+      .send(testMaterials.initialUsers[1])
+
+    await api
+      .post('/api/login')
+      .send(testMaterials.testUserCredentials[1])
+      .expect(response => { unvalidTestToken = response.body.token })
+
+
+    const blogsAtStart = await testHelper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const updatedBlog = {
+      likes: 22
+    }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', `bearer ${unvalidTestToken}`)
+      .send(updatedBlog)
+      .expect(401)
+
+    const blogsAtEnd = await testHelper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length)
+
+    const likes = blogsAtEnd.map(r => r.likes)
+    expect(likes).not.toContain(22)
+    expect(likes).toContain(blogToUpdate.likes)
+  })
+
 
 })
 
+
+
 describe('DELETING BLOGS:', () => {
 
-  test('a blog can be deleted', async () => {
+
+  test('blog can be deleted', async () => {
     const blogsAtStart = await testHelper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${testToken}`)
       .expect(204)
 
     const blogsAtEnd = await testHelper.blogsInDb()
@@ -234,6 +342,34 @@ describe('DELETING BLOGS:', () => {
     const titles = blogsAtEnd.map(r => r.title)
     expect(titles).not.toContain(blogToDelete.title)
   })
+
+
+  test('blog is not deleted with unvalid authorization token', async () => {
+
+    await api
+      .post('/api/users')
+      .send(testMaterials.initialUsers[1])
+
+    await api
+      .post('/api/login')
+      .send(testMaterials.testUserCredentials[1])
+      .expect(response => { unvalidTestToken = response.body.token })
+
+    const blogsAtStart = await testHelper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${unvalidTestToken}`)
+      .expect(401)
+
+    const blogsAtEnd = await testHelper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(testMaterials.initialBlogs.length)
+
+    const titles = blogsAtEnd.map(r => r.title)
+    expect(titles).toContain(blogToDelete.title)
+  })
+
 
 })
 

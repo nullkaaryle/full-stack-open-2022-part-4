@@ -1,17 +1,17 @@
 const bcrypt = require('bcrypt')
 const supertest = require('supertest')
-const mongoose = require('mongoose')
 const testHelper = require('./test_helper')
-const testMaterials = require('./test_materials')
 const app = require('../app')
 
 const api = supertest(app)
 const User = require('../models/user')
 
+
 beforeEach(async () => {
   await User.deleteMany({})
 
   const passwordHash = await bcrypt.hash('sekret', 10)
+
   const user = new User({
     username: 'root',
     passwordHash
@@ -21,8 +21,8 @@ beforeEach(async () => {
 })
 
 
-describe('USER CREATION: USERNAME TESTS', () => {
 
+describe('USER CREATION: USERNAME TESTS', () => {
 
 
   test('user creation succeeds with a fresh username', async () => {
@@ -47,6 +47,7 @@ describe('USER CREATION: USERNAME TESTS', () => {
     expect(usernames).toContain(newUser.username)
   })
 
+
   test('user creation fails if username already taken', async () => {
     const usersAtStart = await testHelper.usersInDb()
 
@@ -70,6 +71,7 @@ describe('USER CREATION: USERNAME TESTS', () => {
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 
+
   test('user creation fails if username is too short', async () => {
     const usersAtStart = await testHelper.usersInDb()
 
@@ -91,6 +93,7 @@ describe('USER CREATION: USERNAME TESTS', () => {
     const usersAtEnd = await testHelper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
+
 
   test('user creation fails if username is not given', async () => {
     const usersAtStart = await testHelper.usersInDb()
@@ -120,6 +123,7 @@ describe('USER CREATION: USERNAME TESTS', () => {
 
 describe('USER CREATION: PASSWORD TESTS', () => {
 
+
   test('user creation fails if password is too short', async () => {
     const usersAtStart = await testHelper.usersInDb()
 
@@ -141,6 +145,7 @@ describe('USER CREATION: PASSWORD TESTS', () => {
     const usersAtEnd = await testHelper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
+
 
   test('user creation fails if password is not given', async () => {
     const usersAtStart = await testHelper.usersInDb()

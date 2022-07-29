@@ -3,6 +3,6 @@
 // the REST client will execute the HTTP request and 
 // response from the server is opened in the editor.
 
-DELETE http://localhost:3001/api/blogs/62e0500f6a6ff53b88966c2e
+DELETE http://localhost:3001/api/blogs/62e2c482cbb545b3e6a272b1
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlcnNzb24iLCJpZCI6IjYyZTAwZGVlNGY4MzY1YWJjODY4NGI2NCIsImlhdCI6MTY1ODg2NzcwMiwiZXhwIjoxNjU4ODcxMzAyfQ.JaAVBB1eLhaXY_j1qj63hv_zou10pCcHv7t6CHtZSk0
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpbXRlcyIsImlkIjoiNjJlMmMyNWFjYmI1NDViM2U2YTI3MjljIiwiaWF0IjoxNjU5MDI4MDYxLCJleHAiOjE2NTkwMzE2NjF9._-i4znJBcuCfF_ef8Q3smVB_OPL42v2qWsMTFGv7IdA
