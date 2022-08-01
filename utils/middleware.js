@@ -2,7 +2,13 @@ const logger = require('./logger')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 
+// Middlewares can be used to handle request and response objects.
+// next() function in a middleware gives control to the next middleware.
+// (Middlewares are defined in app.js in specific order)
 
+
+// Logs request info.
+// Uses logger to log to console.
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
   logger.info('Path:  ', request.path)
@@ -12,6 +18,8 @@ const requestLogger = (request, response, next) => {
 }
 
 
+// Finds out the user from the request token
+// and then adds it in to the request as "user"
 const userExtractor = (request, response, next) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
@@ -25,7 +33,8 @@ const userExtractor = (request, response, next) => {
   next()
 }
 
-
+// Extracts the token from the authorization header
+// and then adds it to the request as "token"
 const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
 
@@ -38,14 +47,17 @@ const tokenExtractor = (request, response, next) => {
   next()
 }
 
-
+// If user ends up to address not defined
+// and gets 404 statuscode in response.
 const unknownEndpoint = (request, response, next) => {
   response.status(404).send({
     error: 'unknown endpoint'
   })
 }
 
-
+// Middleware for checking specific errors
+// and adding error messages for them.
+// Error handling middleware always takes four arguments.
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
 

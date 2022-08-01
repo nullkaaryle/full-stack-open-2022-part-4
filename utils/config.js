@@ -1,3 +1,9 @@
+// This file handles environment variables
+// PORT for server
+// MONGODB_URI for database connection
+// SECRET for digital token signing
+// Different variables are given when tests are run
+
 require('dotenv').config()
 
 let PORT = process.env.PORT

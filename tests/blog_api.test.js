@@ -1,5 +1,6 @@
 const supertest = require('supertest')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
 const testHelper = require('./test_helper')
 const testMaterials = require('./test_materials')
@@ -10,10 +11,18 @@ const User = require('../models/user')
 const app = require('../app')
 const api = supertest(app)
 
-var testToken = null
-var unvalidTestToken = null
+// Tokens are used in tests.
+// Values for token variables are assigned in beforeEach.
+var testToken
+var unvalidTestToken
 
-
+// beforeEach is done before every test.
+// Removes all users from testdatabase
+// and then adds and logins a new user (by POST method)
+// and saves the returned authentication token to variable testToken.
+// Also removes all blogs from testdatabase
+// and then two new blogs are added to testdatabase.
+// Instead of adding the blogs straight to database, blogRouter is used (POST method).
 beforeEach(async () => {
 
   await User
@@ -44,11 +53,12 @@ beforeEach(async () => {
 })
 
 
-
+// Anyone can view blogs,
+// no authorization token is required for GET.
 describe('BLOGS ARE RETURNED CORRECTLY:', () => {
 
 
-  test('blogs are returned as json', async () => {
+  test.only('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
       .expect(200)
@@ -96,7 +106,8 @@ describe('BLOGS ARE RETURNED CORRECTLY:', () => {
 })
 
 
-
+// Anyone can view a blog,
+// no authorization token is required for GET.
 describe('VIEWING BLOGS:', () => {
 
 

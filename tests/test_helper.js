@@ -2,6 +2,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 
+// Returns a deleted blog's id
 const nonExistingId = async () => {
   const blog = new Blog({
     title: 'title-soon-to-be-removed',
@@ -15,13 +16,13 @@ const nonExistingId = async () => {
   return blog._id.toString()
 }
 
-
+// Returns all blogs in testdatabase
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
 }
 
-
+// Returns all users in testdatabase
 const usersInDb = async () => {
   const users = await User.find({})
   return users.map(u => u.toJSON())

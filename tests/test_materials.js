@@ -11,14 +11,15 @@ const initialUsers = [
   }
 ]
 
-const testUserCredentials = [{
-  username: initialUsers[0].username,
-  password: initialUsers[0].password
-},
-{
-  username: initialUsers[1].username,
-  password: initialUsers[1].password
-}
+const testUserCredentials = [
+  {
+    username: initialUsers[0].username,
+    password: initialUsers[0].password
+  },
+  {
+    username: initialUsers[1].username,
+    password: initialUsers[1].password
+  }
 ]
 
 
