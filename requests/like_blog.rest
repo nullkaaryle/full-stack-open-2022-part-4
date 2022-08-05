@@ -1,0 +1,11 @@
+
+PUT http://localhost:3001/api/blogs/like/62de907b92f62d569cf0b08e
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpbXRlcyIsImlkIjoiNjJlMmMyNWFjYmI1NDViM2U2YTI3MjljIiwiaWF0IjoxNjU5Njk4NTIwLCJleHAiOjE2NTk3MDIxMjB9.sSoXualXh1unC2-KPenqV_iXXbx3JdBEcfC5K7wqlgA
+
+{
+  "author": "Author should not be updated",
+  "title": "Title should not be updated",
+  "url": "Definitely wrong url",
+  "likes": -273
+}

@@ -5,8 +5,8 @@
 
 POST http://localhost:3001/api/blogs/
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpbXRlcyIsImlkIjoiNjJlMmMyNWFjYmI1NDViM2U2YTI3MjljIiwiaWF0IjoxNjU5MDI4MDYxLCJleHAiOjE2NTkwMzE2NjF9._-i4znJBcuCfF_ef8Q3smVB_OPL42v2qWsMTFGv7IdA
-
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpbXRlcyIsImlkIjoiNjJlMmMyNWFjYmI1NDViM2U2YTI3MjljIiwiaWF0IjoxNjU5NjMxNzk4LCJleHAiOjE2NTk2MzUzOTh9.dckoNETl6Yo-I5_0rg2sjaTGfAVWNbV6jfR5iEWwgi8
+  
   {
     "title": "First class tests-osa-2",
     "author": "Robert C. Martin",

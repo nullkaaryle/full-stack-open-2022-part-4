@@ -53,6 +53,8 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   })
 
   const savedBlog = await blog.save()
+  await savedBlog.populate('user', { username: 1, name: 1 })
+
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
@@ -64,7 +66,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 // Setting the option {new: true} will return the document after the update is done.
 // Uses userExtractor middleware, which gives us the user from user.token
 // updating cannot be done if there is no valid token in the request,
-// only the owner of the blog can update the blog.
+// only the owner of the blog can update all the blog details.
 blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const body = request.body
   const user = await request.user
@@ -79,6 +81,23 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
 
   if (blog.user.toString() === user._id.toString()) {
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, dataForBlogUpdate, { new: true })
+    response.json(updatedBlog)
+  } else {
+    response.status(401).json({
+      error: 'no permission'
+    })
+  }
+})
+
+// api/blogs/like/:id is used only for adding one like to blog's likes.
+// updating likes cannot be done if there is no valid token in the request,
+// so the user liking a blog must be logged in
+// user can update likes to any of the blogs
+blogsRouter.put('/like/:id', userExtractor, async (request, response) => {
+  const user = await request.user
+
+  if (user) {
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, { $inc: { likes: 1 } }, { new: true })
     response.json(updatedBlog)
   } else {
     response.status(401).json({
