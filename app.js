@@ -72,6 +72,13 @@ app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
+// for safety reasons testing endpoints and router
+// are only used when environment variable is set to test
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/testing')
+  app.use('/api/testing', testingRouter)
+}
+
 // app takes some more middleware into use,
 // these should be defined last
 app.use(middleware.unknownEndpoint)
